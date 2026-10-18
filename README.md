@@ -17,7 +17,8 @@ It is made for phones first. No build step and no dependencies: plain HTML, CSS 
 - Adds up each player's total and marks the leader in gold.
 - Ends the game when every box is filled (or after a generala servida, when that rule is on) and shows the winner, or a tie.
 - **↩ Deshacer** takes back the last score. It asks first.
-- **Jugadores**: type each player's name, add players or remove them. The order of the list is the order of play.
+- **Jugadores**: type each player's name, add players or remove them. The order of the list is the order of play. To rename a player from the sheet, tap the name at the top of the column.
+- A name too long for its column (a phone, many players) shows as initials: «Facundo Ezequiel» as FE, «Jugador 5» as J5, «Bartolomé» as Ba.
 - **Reglas**: match the rules at your table. **Servida suma 5** is on by default, **Generala servida gana** is off.
 - **Nuevo juego** clears the points and keeps the players.
 - Keeps the game after a page reload (saved in the browser's `localStorage`).

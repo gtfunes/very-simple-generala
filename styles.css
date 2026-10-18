@@ -28,6 +28,9 @@ body {
 
 html {
   background-color: var(--bg);
+  /* iOS Safari enlarges text in landscape unless told not to. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   /* Keeps pinch zoom but drops double-tap zoom, so fast taps never zoom the page. */
   touch-action: manipulation;
 }
@@ -183,6 +186,8 @@ button:disabled {
 /* Many players: the sheet scrolls sideways inside its box, never the page. */
 .sheet-wrap {
   overflow-x: auto;
+  /* A sideways swipe at the end of the sheet must not turn into "back" in the browser. */
+  overscroll-behavior-x: contain;
   padding: 4px;
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -204,10 +209,21 @@ button:disabled {
 }
 
 .sheet thead th {
-  overflow: hidden;
-  padding: 4px 2px 6px;
   border-radius: 8px 8px 0 0;
   color: var(--muted);
+}
+
+/* Tap a name to change it. */
+.head-name {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  overflow: hidden;
+  padding: 4px 2px 6px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: none;
+  color: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -237,6 +253,12 @@ button:disabled {
   font-weight: 600;
   text-align: left;
   white-space: nowrap;
+}
+
+.sheet-wrap.scrolled .corner,
+.sheet-wrap.scrolled tbody th,
+.sheet-wrap.scrolled tfoot th {
+  box-shadow: 8px 0 8px -6px rgb(0 0 0 / 0.6);
 }
 
 .sheet tr.split > * {

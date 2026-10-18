@@ -29,6 +29,7 @@ const maxPoints = (category) => (category.face ? category.face * 5 : category.po
 const els = {
   banner: document.getElementById('banner'),
   status: document.getElementById('status'),
+  sheetWrap: document.querySelector('.sheet-wrap'),
   sheet: document.getElementById('sheet'),
   sheetHead: document.getElementById('sheet-head'),
   sheetBody: document.getElementById('sheet-body'),
@@ -169,6 +170,14 @@ function displayName(player) {
   return player.name.trim() || `Jugador ${state.players.indexOf(player) + 1}`;
 }
 
+// "Facundo Ezequiel" → "FE", "Jugador 5" → "J5", "Bartolomé" → "Ba".
+function initials(name) {
+  const words = name.split(/\s+/).filter(Boolean);
+  if (words.length > 1) return words.slice(0, 2).map((word) => [...word][0].toUpperCase()).join('');
+  const [first = '', second = ''] = [...(words[0] ?? '')];
+  return first.toUpperCase() + second;
+}
+
 function listOf(items) {
   try {
     return new Intl.ListFormat('es', { type: 'conjunction' }).format(items);
@@ -265,6 +274,18 @@ function addPlayer() {
   buildPlayerList();
   render();
   els.playerList.lastElementChild?.querySelector('input').focus();
+}
+
+// From a tap on a column header: on a phone the name fields are far below the sheet.
+function renamePlayer(index) {
+  const player = state.players[index];
+  if (!player) return;
+  const name = window.prompt(`Nombre del jugador ${index + 1}`, player.name);
+  if (name === null) return;
+  player.name = name.trim().slice(0, NAME_MAX);
+  save();
+  buildPlayerList();
+  render();
 }
 
 function removePlayer(index) {
@@ -383,9 +404,14 @@ function categoryLabel(category) {
 function buildSheet() {
   const corner = document.createElement('td');
   corner.className = 'corner';
-  headCells = state.players.map(() => {
+  headCells = state.players.map((_, playerIndex) => {
     const th = document.createElement('th');
     th.scope = 'col';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'head-name';
+    button.addEventListener('click', () => renamePlayer(playerIndex));
+    th.append(button);
     return th;
   });
   els.sheetHead.replaceChildren(corner, ...headCells);
@@ -422,6 +448,17 @@ function buildSheet() {
   els.sheet.style.setProperty('--players', String(state.players.length));
 }
 
+// A name too long for its column (a phone, many players) shows as initials instead of being cut off.
+// The columns have a fixed layout, so the text never changes their width.
+function fitHeadNames() {
+  headCells.forEach((th, index) => {
+    const button = th.firstChild;
+    const name = displayName(state.players[index]);
+    button.textContent = name;
+    if (button.scrollWidth > button.clientWidth) button.textContent = initials(name);
+  });
+}
+
 function buildPlayerList() {
   removeButtons = [];
   els.playerList.replaceChildren(
@@ -433,6 +470,9 @@ function buildPlayerList() {
       input.maxLength = NAME_MAX;
       input.placeholder = `Jugador ${index + 1}`;
       input.autocomplete = 'off';
+      input.autocapitalize = 'words';
+      input.spellcheck = false;
+      input.setAttribute('autocorrect', 'off');
       input.enterKeyHint = 'done';
       input.setAttribute('aria-label', `Nombre del jugador ${index + 1}`);
       input.addEventListener('input', () => {
@@ -465,7 +505,7 @@ function render() {
   players.forEach((player, playerIndex) => {
     const name = displayName(player);
     const isTurn = player === turn;
-    headCells[playerIndex].textContent = name;
+    headCells[playerIndex].firstChild.setAttribute('aria-label', `Cambiar el nombre de ${name}`);
     headCells[playerIndex].classList.toggle('turn', isTurn);
     CATEGORIES.forEach((category, categoryIndex) => {
       const button = cellButtons[playerIndex][categoryIndex];
@@ -492,12 +532,15 @@ function render() {
   els.banner.hidden = !banner;
 
   if (done.length) els.status.textContent = 'Tocá «Nuevo juego» para jugar otra.';
-  else if (!hasScores()) els.status.textContent = `Empieza ${displayName(turn)}. Tocá un casillero para anotar.`;
+  else if (!hasScores() && players.every((player) => !player.name.trim())) {
+    els.status.textContent = 'Tocá cada nombre para cambiarlo y un casillero para anotar.';
+  } else if (!hasScores()) els.status.textContent = `Empieza ${displayName(turn)}. Tocá un casillero para anotar.`;
   else {
     const round = `${filled(turn) + 1} de ${CATEGORIES.length}`;
     els.status.textContent = players.length > 1 ? `Turno de ${displayName(turn)} · ronda ${round}` : `Ronda ${round}`;
   }
 
+  fitHeadNames();
   els.undo.disabled = state.log.length === 0;
   els.playerCount.textContent = `${players.length} / ${MAX_PLAYERS}`;
   els.addPlayer.disabled = players.length >= MAX_PLAYERS;
@@ -532,6 +575,18 @@ els.picker.addEventListener('close', () => {
 els.picker.addEventListener('click', (event) => {
   if (event.target === els.picker) els.picker.close();
 });
+
+// A shadow on the row names while the sheet is scrolled sideways, so the cut-off columns read as hidden.
+els.sheetWrap.addEventListener(
+  'scroll',
+  () => {
+    els.sheetWrap.classList.toggle('scrolled', els.sheetWrap.scrollLeft > 0);
+  },
+  { passive: true },
+);
+
+// Column widths change with the screen (rotation, split view), so check the names again.
+new ResizeObserver(fitHeadNames).observe(els.sheet);
 
 // Ask for the wake lock on the first touch, so the screen stays on from the start.
 document.addEventListener('pointerdown', keepAwake, { once: true });
