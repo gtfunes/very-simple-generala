@@ -10,15 +10,15 @@ It is made for phones first. No build step and no dependencies: plain HTML, CSS 
 - Tap a box to score it. A sheet opens from the bottom of the screen with only the scores that box can take:
   - **1 to 6**: how many dice show that face (1 to 5), so «Al 4» with 3 dice scores 12.
   - **Escalera, Full, Póker**: armada (20, 30, 40) or servida (5 more).
-  - **Generala**: 50, or **¡Gana!** for a generala servida.
+  - **Generala**: 50. With **Generala servida gana** on, also **¡Gana!** for a generala servida.
   - **Doble generala**: 100, only after the player has scored a generala.
   - **✕ Tachar** scores 0 in any row. **Borrar** empties a box again.
 - Shows whose turn it is (the player with the fewest boxes filled) and the round, and marks that player's empty boxes in gold.
 - Adds up each player's total and marks the leader in gold.
-- Ends the game when every box is filled (or after a generala servida) and shows the winner, or a tie.
+- Ends the game when every box is filled (or after a generala servida, when that rule is on) and shows the winner, or a tie.
 - **↩ Deshacer** takes back the last score. It asks first.
 - **Jugadores**: type each player's name, add players or remove them. The order of the list is the order of play.
-- **Reglas**: turn off **Servida suma 5** or **Generala servida gana** to match the rules at your table.
+- **Reglas**: match the rules at your table. **Servida suma 5** is on by default, **Generala servida gana** is off.
 - **Nuevo juego** clears the points and keeps the players.
 - Keeps the game after a page reload (saved in the browser's `localStorage`).
 - Keeps open tabs in sync.
@@ -37,7 +37,7 @@ The points follow the most common rules in Argentina:
 | Escalera       | 20, or 25 servida                   |
 | Full           | 30, or 35 servido                   |
 | Póker          | 40, or 45 servido                   |
-| Generala       | 50. A generala servida wins the game |
+| Generala       | 50. With **Generala servida gana** on, a generala servida wins the game |
 | Doble generala | 100, only after a generala          |
 
 "Servida" means on the first roll of the turn. House rules vary: two of them are switches in **Reglas**, and the points are in `CATEGORIES` and `SERVIDA_BONUS` at the top of `app.js`.

@@ -111,7 +111,7 @@ function readSaved() {
       winner: ids.has(saved.winner) ? saved.winner : null,
       rules: {
         servidaBonus: saved.rules?.servidaBonus !== false,
-        servidaWins: saved.rules?.servidaWins !== false,
+        servidaWins: saved.rules?.servidaWins === true,
       },
     };
   } catch {
@@ -129,7 +129,7 @@ function load() {
       ],
       log: [],
       winner: null,
-      rules: { servidaBonus: true, servidaWins: true },
+      rules: { servidaBonus: true, servidaWins: false },
     }
   );
 }
