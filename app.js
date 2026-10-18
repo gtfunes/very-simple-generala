@@ -354,9 +354,12 @@ function pick(option) {
   els.picker.close();
   if (!player || !category) return;
   const wasOver = winners().length > 0;
+  const firstScore = !hasScores();
   setScore(player, category, option.value, Boolean(option.wins));
   render();
   const endsNow = !wasOver && winners().length > 0;
+  if (firstScore) window.track?.('game_start', { players: state.players.length });
+  if (endsNow) window.track?.('game_end', { players: state.players.length, servida: Boolean(state.winner) });
   navigator.vibrate?.(endsNow ? [40, 80, 160] : 30);
   if (!reducedMotion.matches && option.value !== null) {
     cellButtons[playerIndex][categoryIndex].animate([{ transform: 'scale(1.25)' }, { transform: 'scale(1)' }], {
