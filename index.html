@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Anotador de generala: la planilla de puntos para jugar con dados de verdad." />
+    <meta name="theme-color" content="#12122a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Generala" />
+    <title>Generala</title>
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>🎲 Generala</h1>
+    </header>
+
+    <main class="app">
+      <section class="game" aria-label="Planilla">
+        <p class="banner" id="banner" hidden></p>
+        <p class="status" id="status" aria-live="polite"></p>
+
+        <div class="sheet-wrap">
+          <table class="sheet" id="sheet">
+            <thead>
+              <tr id="sheet-head"></tr>
+            </thead>
+            <tbody id="sheet-body"></tbody>
+            <tfoot>
+              <tr id="sheet-total"></tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="tools">
+          <button id="undo" type="button">↩ Deshacer</button>
+        </div>
+      </section>
+
+      <div class="side">
+        <section class="players" aria-labelledby="players-title">
+          <h2 id="players-title">Jugadores <span class="count" id="player-count"></span></h2>
+          <ol class="player-list" id="player-list"></ol>
+          <button id="add-player" type="button">+ Agregar jugador</button>
+        </section>
+
+        <section class="options" aria-labelledby="rules-title">
+          <h2 id="rules-title">Reglas</h2>
+          <label class="field check">
+            Servida suma 5
+            <input type="checkbox" id="servida-bonus" />
+          </label>
+          <label class="field check">
+            Generala servida gana
+            <input type="checkbox" id="servida-wins" />
+          </label>
+          <button id="reset" type="button">Nuevo juego</button>
+        </section>
+      </div>
+    </main>
+
+    <dialog class="picker" id="picker" aria-labelledby="picker-title">
+      <div class="picker-body">
+        <h2 id="picker-title"></h2>
+        <p class="picker-hint" id="picker-hint" hidden></p>
+        <div class="picker-options" id="picker-options"></div>
+        <div class="picker-actions">
+          <button id="picker-clear" type="button">Borrar</button>
+          <button id="picker-cancel" type="button">Cancelar</button>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>
